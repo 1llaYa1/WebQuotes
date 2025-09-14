@@ -59,7 +59,7 @@
                                 body: JSON.stringify({
                                     "like_btn": true
                                 })
-                        }).then( res => res.json().then(data => ({status: res.status, body: data}))).then(obj => console.log(obj.body) || draw_like_btn(obj, like_btns[i]))
+                        }).then( res => res.json().then(data => ({status: res.status, body: data}))).then(obj => console.log(obj.body) || draw_like_btn(obj, like_btns[i], oppositebutton=dislike_btns[i]))
                     });}
 
                     const dislike_btns = document.querySelectorAll('.dislike_button');
@@ -79,34 +79,40 @@
                             body: JSON.stringify({
                                 "like_btn": false 
                             })
-                        }).then( res => res.json().then(data => ({status: res.status, body: data}))).then(obj => console.log(obj.body) || draw_dislike_btn(obj, dislike_btns[i]))
+                        }).then( res => res.json().then(data => ({status: res.status, body: data}))).then(obj => console.log(obj.body) || draw_dislike_btn(obj, dislike_btns[i], oppositebutton=like_btns[i]))
                     });}
 
-                    function draw_like_btn(obj, button){
+                    function draw_like_btn(obj, button, oppositebutton){
                         liked = obj.body["liked"];
                         likes_val = obj.body["likes_val"];
+                        dislikes_val = obj.body["dislikes_val"];
                         button.classList.remove("voted"); 
                         if(liked){
                             button.classList.add("voted");
                             button.querySelectorAll('.val')[0].innerHTML = likes_val;
+                            oppositebutton.querySelectorAll('.val')[0].innerHTML = likes_val;
                         }
                         else{
                             button.classList.remove("voted");
                             button.querySelectorAll('.val')[0].innerHTML = likes_val;
+                            oppositebutton.querySelectorAll('.val')[0].innerHTML = likes_val;
                         }
                     }
 
-                    function draw_dislike_btn(obj, button){
+                    function draw_dislike_btn(obj, button, oppositebutton){
                         disliked = obj.body["disliked"];
+                        likes_val = obj.body["likes_val"];
                         dislikes_val = obj.body["dislikes_val"];
                         button.classList.remove("voted");                            
                         if(disliked){
                             button.classList.add("voted");
                             button.querySelectorAll('.val')[0].innerHTML = dislikes_val;
+                            oppositebutton.querySelectorAll('.val')[0].innerHTML = likes_val;
                         }
                         else{
                             button.classList.remove("voted");
                             button.querySelectorAll('.val')[0].innerHTML = dislikes_val;
+                            oppositebutton.querySelectorAll('.val')[0].innerHTML = likes_val;
                         }
                     }
                 </script>
