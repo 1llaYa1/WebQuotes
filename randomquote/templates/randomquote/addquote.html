@@ -1,0 +1,84 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html>
+    <head>
+        <link rel="stylesheet" href="{% static 'style.css' %}">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    </head>
+    <body>
+        <header>
+            <p class="WebQuotes">WebQuotes</p>
+            <nav>
+                <a href="..">HOME</a>
+                <a href="../popular">POPULAR</a>
+                <a href="../addquote">NEW QUOTE</a>
+            </nav>
+            <a class="login" href="../../../authenticate"><img src="{% static 'randomquote/images/login_icon.png' %}"></a>  
+        </header>
+        <div class="main">
+            <h2>Add A New Quote</h2>
+            <form id="new_quote" action="new_quote/" method="post">
+                <ol>
+                <button type="submit" disabled style="display: none" aria-hidden="true"></button>
+                <li >
+                    <h3>Write down a source name:</h3>
+                    <input id="source_f" type="text" class="source_field" placeholder="Source name" required>
+                </li>
+                <li>
+                    <h3>Write down a quote text:</h3>
+                    <textarea id="text_f" class="text_field" placeholder="Quote text" required></textarea>
+                </li>
+                <li>
+                    <h3>Write down a weight of the quote (1-100):</h3>
+                    <textarea id="weight_f" class="text_field" placeholder="Quote weight" required></textarea>
+                </li>
+                <li>
+                    <h3>Submit the quote:</h3>
+                    <div class="submit_message" id="result"><p></p></div>
+                    <input class="submit_button" type="submit" value="Submit" id="loadButton">
+                    {% csrf_token %}
+                    <script>
+                        $("#new_quote").submit(function(event) {
+                            $('#submit_button').attr('disabled', true);
+                            const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+
+                            const request = new Request(
+                                url='new_quote/',
+                                {headers: {'X-CSRFToken': csrftoken}}
+                            );
+
+                            event.preventDefault();
+                            fetch(
+                                request, {
+                                    method: "POST",
+                                    mode: 'same-origin',
+                                    body: JSON.stringify({
+                                        text: $('#text_f').val(), 
+                                        source: $('#source_f').val(),
+                                        weight: $('#weight_f').val(),
+                                    })
+                            }).then( res => res.json().then(data => ({status: res.status, body: data}))).then(obj => console.log(obj.body) || draw(obj))
+                        });
+
+                        function draw(obj){
+                                msg = obj.body["message"];
+                                success = obj.body["success"];
+                                console.log(msg, success)
+                                if(success){
+                                    $('#result').addClass("submit_message_success");
+                                    $('#result').removeClass("submit_message_fail");
+                                }
+                                else{
+                                    $('#result').addClass("submit_message_fail");
+                                    $('#result').removeClass("submit_message_success");
+                                }
+                                $('#result > p').text(((msg)));
+                        }
+                    </script>
+                </li>
+                </ol>
+            </form>
+        </div>
+    </body>
+</html>

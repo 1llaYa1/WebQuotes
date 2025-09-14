@@ -1,0 +1,123 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html>
+    <head>
+        <link rel="stylesheet" href="{% static 'style.css' %}">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    </head>
+    <body>
+        <header>
+            <p class="WebQuotes">WebQuotes</p>
+            <nav>
+                <a href="..">HOME</a>
+                <a href="../popular">POPULAR</a>
+                <a href="../addquote">NEW QUOTE</a>
+            </nav>
+            <a class="login" href="../../../authenticate"><img src="{% static 'randomquote/images/login_icon.png' %}"></a> 
+        </header>
+        <div class="main">
+        <div class="quote_div">
+            <h2>Most Popular Quotes</h2>
+            <ol>
+            {% for quote in popular_quotes %}
+                <li>
+                    <div>    
+                        <p class="quote_text">{{quote.text}}</p>
+                        <p class="quote_source"> - {{quote.source}}</p>
+                    </div>
+                    <div class="inline_flex">
+                        <div id="like_btn_{{quote.id}}" data-quote-id="{{quote.id}}" class="like_button inline_flex {{quote.is_liked}}">
+                            <img class="icon" src="{% static 'randomquote/images/like_icon.png' %}">
+                            <p class="val">{{quote.get_likes}}</p>
+                        </div>
+                        
+                        <div id="dislike_btn_{{quote.id}}" data-quote-id="{{quote.id}}" class="dislike_button inline_flex">
+                            <img class="icon" src="{% static 'randomquote/images/dislike_icon.png' %}">
+                            <p class="val">{{quote.get_dislikes}}</p>
+                        </div>
+                        <div class="inline_flex">
+                            <p class="quote_info">{{ quote.get_views }}</p>
+                            <img class="views_icon" src="{% static 'randomquote/images/views_icon.png' %}">
+                        </div>
+                    </form>
+                    </div>
+                    <hr>
+                </li>
+            {% endfor %}
+            {% csrf_token %}
+                        <script>
+                            const like_btns = document.querySelectorAll('.like_button');
+                            for(let i = 0; i < like_btns.length; i++){
+                                like_btns[i].addEventListener('click', function(event) {
+                                    event.stopPropagation();
+                                    const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+                                    const request = new Request(
+                                        url = '../' + like_btns[i].getAttribute('data-quote-id') +'/vote/',
+                                        {headers: {'X-CSRFToken': csrftoken}}
+                                    );
+                                    event.preventDefault();
+                                    fetch(
+                                            request, {
+                                            method: "POST",
+                                            mode: 'same-origin',
+                                            body: JSON.stringify({
+                                                "like_btn": true
+                                            })
+                                    }).then( res => res.json().then(data => ({status: res.status, body: data}))).then(obj => console.log(obj.body) || draw_like_btn(obj, like_btns[i]))
+                                });
+                            }
+
+                            const dislike_btns = document.querySelectorAll('.dislike_button');
+                            for(let i = 0; i < dislike_btns.length; i++){
+                                dislike_btns[i].addEventListener('click', function(event) {
+                                event.stopPropagation();
+                                const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+                                const request = new Request(
+                                    url= '../' + dislike_btns[i].getAttribute('data-quote-id') + '/vote/',
+                                    {headers: {'X-CSRFToken': csrftoken}}
+                                );
+                                event.preventDefault();
+                                fetch(
+                                        request, {
+                                        method: "POST",
+                                        mode: 'same-origin',
+                                        body: JSON.stringify({
+                                            "like_btn": false 
+                                        })
+                                }).then( res => res.json().then(data => ({status: res.status, body: data}))).then(obj => console.log(obj.body) || draw_dislike_btn(obj, dislike_btns[i]))
+                            });}
+
+                            function draw_like_btn(obj, button){
+                                liked = obj.body["liked"];
+                                likes_val = obj.body["likes_val"];
+                                button.classList.remove("voted"); 
+                                if(liked){
+                                    button.classList.add("voted");
+                                    button.querySelectorAll('.val')[0].innerHTML = likes_val;
+                                }
+                                else{
+                                    button.classList.remove("voted");
+                                    button.querySelectorAll('.val')[0].innerHTML = likes_val;
+                                }
+                            }
+
+                            function draw_dislike_btn(obj, button){
+                                disliked = obj.body["disliked"];
+                                dislikes_val = obj.body["dislikes_val"];
+                                button.classList.remove("voted");                            
+                                if(disliked){
+                                    button.classList.add("voted");
+                                    button.querySelectorAll('.val')[0].innerHTML = dislikes_val;
+                                }
+                                else{
+                                    button.classList.remove("voted");
+                                    button.querySelectorAll('.val')[0].innerHTML = dislikes_val;
+                                }
+                            }
+                        </script>
+            </ol>
+        </div>
+        </div>
+    </body>
+</html>
