@@ -30,6 +30,26 @@ def auth(request):
     else:
         return JsonResponse({"success": False, 'message': 'Wrong username or password!'})
 
+def registration_view(request):
+    template = loader.get_template("randomquote/registration.html")
+    context = {}
+    return HttpResponse(template.render(context, request))
+
+def registration(request):
+    data = json.loads(request.body)
+    username = data["username"]
+    password = data["password"]
+    #user = authenticate(request, username=username, password=password)
+    user = User.objects.create_user(username=username, password=password)
+    user.save()
+    return JsonResponse({"success": True, 'message': 'Registration complete!'})
+    if user is None:
+        user = User.objects.create_user(username=username, password=password)
+        user.save()
+        return JsonResponse({"success": True, 'message': 'Registration complete!'})
+    else:
+        return JsonResponse({"success": False, 'message': 'User already exists!'})
+
 def auth_complete(request):
     template = loader.get_template("randomquote/auth_complete.html")
     context = {}

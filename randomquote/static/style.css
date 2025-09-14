@@ -220,3 +220,11 @@ div.voted img {
     justify-content: center;
     align-items: center;
 }
+
+.link {
+    color: #000;
+}
+
+.link:hover{
+    font-weight: bold;
+}

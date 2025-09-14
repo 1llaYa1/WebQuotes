@@ -17,21 +17,21 @@
             <a class="login" href="../../../authenticate"><img src="{% static 'randomquote/images/login_icon.png' %}"></a>  
         </header>
         <div class="main">
-            <h2>Authentication</h2>
+            <h2>Registration</h2>
             <form id="auth" action="auth/" method="post">
                 <button type="submit" disabled style="display: none" aria-hidden="true"></button>
-                <legend>Please, authenticate to gain full access to the website.</legend>
+                <legend>Please, fill in the form below to registrate.</legend>
                 <hr>
                 <div id="result" class="submit_message"><p></p></div>
                 <input id="username_f" type="text" class="general_field" placeholder="Username" required>
                 <input id="password_f" class="general_field" placeholder="Password" required>
-                <input id="submit_btn" class="submit_button" type="submit" value="Authenticate">
+                <input id="submit_btn" class="submit_button" type="submit" value="Registrate">
                 {% csrf_token %}
                 <script>
                     $("#auth").submit(function(event) {
                         const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
                         const request = new Request(
-                            url='auth/',
+                            url='reg/',
                             {headers: {'X-CSRFToken': csrftoken}}
                         );
                         event.preventDefault();
@@ -67,7 +67,6 @@
                     }
                 </script>
             </form>
-            <a class="link" href="registration/">Create new account</a>
         </div>
     </body>
 </html>
