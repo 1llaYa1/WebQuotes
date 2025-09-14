@@ -75,15 +75,12 @@ def index(request):
 def popular(request):
     popular_quotes = Quote.objects.order_by("-likes")[:10]
     data = []
-    #for i in popular_quotes:
-    #    data.append([i, Quote.is_liked(user=User.objects.filter(id=get_user(request).id).get(), quote_id=i.id)])
     template = loader.get_template("randomquote/popular.html")
     context = {"popular_quotes": popular_quotes}
     for i in popular_quotes:
         inst = Quote.objects.get(pk=i.pk)
         inst.views += 1
         inst.save()
-        inst.refresh_from_db()
     return HttpResponse(template.render(context, request))
 
 @login_required
