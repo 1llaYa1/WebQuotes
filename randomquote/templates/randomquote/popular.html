@@ -46,82 +46,81 @@
                 </li>
             {% endfor %}
             {% csrf_token %}
-                        <script>
-                            const like_btns = document.querySelectorAll('.like_button');
-                            for(let i = 0; i < like_btns.length; i++){
-                                like_btns[i].addEventListener('click', function(event) {
-                                    event.stopPropagation();
-                                    const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
-                                    const request = new Request(
-                                        url = '../' + like_btns[i].getAttribute('data-quote-id') +'/vote/',
-                                        {headers: {'X-CSRFToken': csrftoken}}
-                                    );
-                                    event.preventDefault();
-                                    fetch(
-                                            request, {
-                                            method: "POST",
-                                            mode: 'same-origin',
-                                            body: JSON.stringify({
-                                                "like_btn": true
-                                            })
-                                    }).then( res => res.json().then(data => ({status: res.status, body: data}))).then(obj => console.log(obj.body) || draw_like_btn(obj, button= like_btns[i], oppositebutton= dislike_btns[i]))
-                                });
-                            }
+                <script>
+                    const like_btns = document.querySelectorAll('.like_button');
+                    for(let i = 0; i < like_btns.length; i++){
+                        like_btns[i].addEventListener('click', function(event) {
+                            event.stopPropagation();
+                            const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+                            const request = new Request(
+                                url = '../' + like_btns[i].getAttribute('data-quote-id') +'/vote/',
+                                {headers: {'X-CSRFToken': csrftoken}}
+                            );
+                            event.preventDefault();
+                            fetch(
+                                request, {
+                                method: "POST",
+                                mode: 'same-origin',
+                                body: JSON.stringify({
+                                    "like_btn": true
+                                })
+                        }).then( res => res.json().then(data => ({status: res.status, body: data}))).then(obj => console.log(obj.body) || draw_like_btn(obj, like_btns[i], oppositebutton=dislike_btns[i]))
+                    });}
 
-                            const dislike_btns = document.querySelectorAll('.dislike_button');
-                            for(let i = 0; i < dislike_btns.length; i++){
-                                dislike_btns[i].addEventListener('click', function(event) {
-                                event.stopPropagation();
-                                const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
-                                const request = new Request(
-                                    url= '../' + dislike_btns[i].getAttribute('data-quote-id') + '/vote/',
-                                    {headers: {'X-CSRFToken': csrftoken}}
-                                );
-                                event.preventDefault();
-                                fetch(
-                                        request, {
-                                        method: "POST",
-                                        mode: 'same-origin',
-                                        body: JSON.stringify({
-                                            "like_btn": false 
-                                        })
-                                }).then( res => res.json().then(data => ({status: res.status, body: data}))).then(obj => console.log(obj.body) || draw_dislike_btn(obj, button=dislike_btns[i], oppositebutton= like_btns[i]))
-                            });}
+                    const dislike_btns = document.querySelectorAll('.dislike_button');
+                    for(let i = 0; i < dislike_btns.length; i++){
+                        dislike_btns[i].addEventListener('click', function(event) {
+                        event.stopPropagation();
+                        const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+                        const request = new Request(
+                            url= '../' + dislike_btns[i].getAttribute('data-quote-id') + '/vote/',
+                            {headers: {'X-CSRFToken': csrftoken}}
+                        );
+                        event.preventDefault();
+                        fetch(
+                            request, {
+                            method: "POST",
+                            mode: 'same-origin',
+                            body: JSON.stringify({
+                                "like_btn": false 
+                            })
+                        }).then( res => res.json().then(data => ({status: res.status, body: data}))).then(obj => console.log(obj.body) || draw_dislike_btn(obj, dislike_btns[i], oppositebutton=like_btns[i]))
+                    });}
 
-                            function draw_like_btn(obj, button, oppositebutton){
-                                liked = obj.body["liked"];
-                                likes_val = obj.body["likes_val"];
-                                dislikes_val = obj.body["dislikes_val"];
-                                button.classList.remove("voted"); 
-                                if(liked){
-                                    button.classList.add("voted");
-                                    button.querySelectorAll('.val')[0].innerHTML = likes_val;
-                                    oppositebutton.querySelectorAll('.val')[0].innerHTML = likes_val;
-                                }
-                                else{
-                                    button.classList.remove("voted");
-                                    button.querySelectorAll('.val')[0].innerHTML = likes_val;
-                                    oppositebutton.querySelectorAll('.val')[0].innerHTML = likes_val;
-                                }
-                            }
+                    function draw_like_btn(obj, button, oppositebutton){
+                        liked = obj.body["liked"];
+                        likes_val = obj.body["likes_val"];
+                        dislikes_val = obj.body["dislikes_val"];
+                        button.classList.remove("voted"); 
+                        if(liked){
+                            button.classList.add("voted");
+                            button.querySelectorAll('.val')[0].innerHTML = likes_val;
+                            oppositebutton.querySelectorAll('.val')[0].innerHTML = likes_val;
+                        }
+                        else{
+                            button.classList.remove("voted");
+                            button.querySelectorAll('.val')[0].innerHTML = likes_val;
+                            oppositebutton.querySelectorAll('.val')[0].innerHTML = likes_val;
+                        }
+                    }
 
-                            function draw_dislike_btn(obj, button, oppositebutton){
-                                disliked = obj.body["disliked"];
-                                likes_val = obj.body["likes_val"];
-                                dislikes_val = obj.body["dislikes_val"];
-                                button.classList.remove("voted");                            
-                                if(disliked){
-                                    button.classList.add("voted");
-                                    button.querySelectorAll('.val')[0].innerHTML = dislikes_val;
-                                    oppositebutton.querySelectorAll('.val')[0].innerHTML = likes_val;
-                                }
-                                else{
-                                    button.classList.remove("voted");
-                                    button.querySelectorAll('.val')[0].innerHTML = dislikes_val;
-                                    oppositebutton.querySelectorAll('.val')[0].innerHTML = likes_val;
-                                }
-                            }
-                        </script>
+                    function draw_dislike_btn(obj, button, oppositebutton){
+                        disliked = obj.body["disliked"];
+                        likes_val = obj.body["likes_val"];
+                        dislikes_val = obj.body["dislikes_val"];
+                        button.classList.remove("voted");                            
+                        if(disliked){
+                            button.classList.add("voted");
+                            button.querySelectorAll('.val')[0].innerHTML = dislikes_val;
+                            oppositebutton.querySelectorAll('.val')[0].innerHTML = likes_val;
+                        }
+                        else{
+                            button.classList.remove("voted");
+                            button.querySelectorAll('.val')[0].innerHTML = dislikes_val;
+                            oppositebutton.querySelectorAll('.val')[0].innerHTML = likes_val;
+                        }
+                    }
+                </script>
             </ol>
         </div>
         </div>
