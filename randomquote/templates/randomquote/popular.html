@@ -64,7 +64,7 @@
                                             body: JSON.stringify({
                                                 "like_btn": true
                                             })
-                                    }).then( res => res.json().then(data => ({status: res.status, body: data}))).then(obj => console.log(obj.body) || draw_like_btn(obj, like_btns[i], dislike_btns[i]))
+                                    }).then( res => res.json().then(data => ({status: res.status, body: data}))).then(obj => console.log(obj.body) || draw_like_btn(obj, button= like_btns[i], oppositebutton= dislike_btns[i]))
                                 });
                             }
 
@@ -85,7 +85,7 @@
                                         body: JSON.stringify({
                                             "like_btn": false 
                                         })
-                                }).then( res => res.json().then(data => ({status: res.status, body: data}))).then(obj => console.log(obj.body) || draw_dislike_btn(obj, dislike_btns[i], like_btns[i]))
+                                }).then( res => res.json().then(data => ({status: res.status, body: data}))).then(obj => console.log(obj.body) || draw_dislike_btn(obj, button=dislike_btns[i], oppositebutton= like_btns[i]))
                             });}
 
                             function draw_like_btn(obj, button, oppositebutton){
@@ -105,7 +105,7 @@
                                 }
                             }
 
-                            function draw_dislike_btn(obj, button){
+                            function draw_dislike_btn(obj, button, oppositebutton){
                                 disliked = obj.body["disliked"];
                                 likes_val = obj.body["likes_val"];
                                 dislikes_val = obj.body["dislikes_val"];
